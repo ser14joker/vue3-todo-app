@@ -1,27 +1,44 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <form @submit.prevent="onSubmit">
+    <label for="new-todo">New Todo</label>
+    <input name="newTodo" id="new-todo" v-model="task.title" type="text" />
+    <button>Add new todo</button>
+  </form>
+
+  <ul>
+    <li v-for="task in todoList" v-bind:key="task.title">
+      {{ task.title }}
+    </li>
+  </ul>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
-import HelloWorld from "./components/HelloWorld.vue";
+import { ref, Ref } from "vue";
+import { Task } from "./models/Task";
 
-@Options({
-  components: {
-    HelloWorld,
-  },
-})
-export default class App extends Vue {}
-</script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+interface TodoApp {
+  onSubmit: () => void;
+  task: Ref<Task>;
+  todoList: Ref<Task[]>;
 }
-</style>
+export default {
+  setup(): TodoApp {
+    const task = ref<Task>({} as Task);
+    const todoList = ref<Task[]>([]);
+
+    const onSubmit = () => {
+      todoList.value.push({
+        title: task.value.title,
+        done: false,
+        deleted: false,
+      });
+    };
+
+    return {
+      onSubmit,
+      todoList,
+      task,
+    };
+  },
+};
+</script>
