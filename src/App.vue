@@ -7,7 +7,12 @@
   </form>
 
   <ul>
-    <li v-for="task in todoList" v-bind:key="task.id">
+    <li
+      v-for="task in todoList"
+      v-bind:key="task.id"
+      @click="markAsDone(task.id)"
+      :class="{ done: task.done }"
+    >
       <h3>{{ task.title }}</h3>
     </li>
   </ul>
@@ -19,6 +24,7 @@ import { Task } from "./models/Task";
 
 interface TodoApp {
   onSubmit: () => void;
+  markAsDone: (taskId: number) => void;
   task: Ref<Task>;
   todoList: Ref<Task[]>;
 }
@@ -37,11 +43,27 @@ export default {
       task.value.title = "";
     };
 
+    const markAsDone = (taskId: number) => {
+      todoList.value = todoList.value.map((task) => ({
+        ...task,
+        done: taskId === task.id ? !task.done : task.done,
+      }));
+    };
     return {
       onSubmit,
+      markAsDone,
       todoList,
       task,
     };
   },
 };
 </script>
+<style>
+.done {
+  text-decoration: line-through;
+  color: crimson;
+}
+li {
+  cursor: pointer;
+}
+</style>
