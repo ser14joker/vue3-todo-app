@@ -1,4 +1,5 @@
 <template>
+  <h1>TodoList with Vue3</h1>
   <form @submit.prevent="onSubmit">
     <label for="new-todo">New Todo</label>
     <input name="newTodo" id="new-todo" v-model="task.title" type="text" />
@@ -6,8 +7,8 @@
   </form>
 
   <ul>
-    <li v-for="task in todoList" v-bind:key="task.title">
-      {{ task.title }}
+    <li v-for="task in todoList" v-bind:key="task.id">
+      <h3>{{ task.title }}</h3>
     </li>
   </ul>
 </template>
@@ -28,10 +29,12 @@ export default {
 
     const onSubmit = () => {
       todoList.value.push({
+        id: Date.now(),
         title: task.value.title,
         done: false,
         deleted: false,
       });
+      task.value.title = "";
     };
 
     return {
