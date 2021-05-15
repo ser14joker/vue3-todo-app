@@ -6,16 +6,16 @@
     <button>Add new todo</button>
   </form>
 
-  <ul>
-    <li
-      v-for="task in todoList"
-      v-bind:key="task.id"
-      @click="markAsDone(task.id)"
-      :class="{ done: task.done }"
-    >
-      <h3>{{ task.title }}</h3>
+  <ol>
+    <li v-for="task in todoList" v-bind:key="task.id">
+      <div class="task-container">
+        <h3 v-bind:class="{ done: task.done }" @click="markAsDone(task.id)">
+          {{ task.title }}
+        </h3>
+        <button v-on:click="deleteTask(task.id)">X</button>
+      </div>
     </li>
-  </ul>
+  </ol>
 </template>
 
 <script lang="ts">
@@ -25,6 +25,7 @@ import { Task } from "./models/Task";
 interface TodoApp {
   onSubmit: () => void;
   markAsDone: (taskId: number) => void;
+  deleteTask: (taskId: number) => void;
   task: Ref<Task>;
   todoList: Ref<Task[]>;
 }
@@ -49,9 +50,18 @@ export default {
         done: taskId === task.id ? !task.done : task.done,
       }));
     };
+
+    const deleteTask = (taskId: number) => {
+      const index = todoList.value.findIndex(
+        (task: Task) => task.id === taskId
+      );
+      todoList.value.splice(index, 1);
+    };
+
     return {
       onSubmit,
       markAsDone,
+      deleteTask,
       todoList,
       task,
     };
@@ -65,5 +75,10 @@ export default {
 }
 li {
   cursor: pointer;
+}
+.task-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 </style>
